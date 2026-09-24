@@ -6,9 +6,9 @@ namespace: between
 resources:
   - ../../base
 
-# Production Image Tags (Immutable commit SHA references)
+# Production Image Tags (Immutable 40-character commit SHA references)
 images:
   - name: ghcr.io/dakshbhavsar007/between-backend
-    newTag: 26bd061
+    newTag: 26bd0618bdd409338e4ba5bc56a6e29ec14a3b86
   - name: ghcr.io/dakshbhavsar007/between-frontend
-    newTag: 26bd061
+    newTag: 26bd0618bdd409338e4ba5bc56a6e29ec14a3b86

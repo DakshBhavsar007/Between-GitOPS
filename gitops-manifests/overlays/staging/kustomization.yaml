@@ -6,9 +6,9 @@ namespace: between
 resources:
   - ../../base
 
-# Immutable image references published in Phase 4 to GHCR
+# Immutable image references published in Phase 4 to GHCR (Full 40-character commit SHA)
 images:
   - name: ghcr.io/dakshbhavsar007/between-backend
-    newTag: 26bd061
+    newTag: 26bd0618bdd409338e4ba5bc56a6e29ec14a3b86
   - name: ghcr.io/dakshbhavsar007/between-frontend
-    newTag: 26bd061
+    newTag: 26bd0618bdd409338e4ba5bc56a6e29ec14a3b86

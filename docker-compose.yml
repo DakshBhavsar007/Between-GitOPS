@@ -40,7 +40,9 @@ services:
       timeout: 3s
       retries: 5
     networks:
-      - between-network
+      between-network:
+        aliases:
+          - between-redis
 
   # ==========================================
   # Backend API: Django + Gunicorn
@@ -81,7 +83,9 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - between-network
+      between-network:
+        aliases:
+          - between-backend
 
   # ==========================================
   # Background Worker: Celery (Reuses Backend Image)
