@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: between
+
+resources:
+  - ../../base
+
+# Production Image Tags (Immutable commit SHA references)
+images:
+  - name: ghcr.io/dakshbhavsar007/between-backend
+    newTag: 26bd061
+  - name: ghcr.io/dakshbhavsar007/between-frontend
+    newTag: 26bd061

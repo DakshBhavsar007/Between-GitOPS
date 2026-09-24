@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: between-celery
+  namespace: between
+  labels:
+    app: between-celery
+    app.kubernetes.io/name: between
+    app.kubernetes.io/component: celery
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: between-celery
+  template:
+    metadata:
+      labels:
+        app: between-celery
+        app.kubernetes.io/name: between
+        app.kubernetes.io/component: celery
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: celery
+          image: ghcr.io/dakshbhavsar007/between-backend:placeholder
+          imagePullPolicy: IfNotPresent
+          command:
+            - celery
+            - -A
+            - workers.celery_worker
+            - worker
+            - --loglevel=info
+            - -c
+            - "2"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          envFrom:
+            - configMapRef:
+                name: between-config
+            - secretRef:
+                name: between-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1024Mi
+          volumeMounts:
+            - name: uploads-volume
+              mountPath: /app/uploads
+            - name: photos-volume
+              mountPath: /app/photos
+      volumes:
+        - name: uploads-volume
+          persistentVolumeClaim:
+            claimName: between-uploads-pvc
+        - name: photos-volume
+          persistentVolumeClaim:
+            claimName: between-uploads-pvc

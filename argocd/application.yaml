@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: between-staging
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: between
+    app.kubernetes.io/part-of: between-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # Dedicated GitOps manifests repository
+    repoURL: https://github.com/DakshBhavsar007/between-k8s-manifests.git
+    targetRevision: main
+    path: overlays/staging
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: between
+  syncPolicy:
+    automated:
+      prune: true      # Automatically delete resources removed from Git
+      selfHeal: true   # Automatically revert out-of-band drifts
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

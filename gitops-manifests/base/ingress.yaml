@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: between-ingress
+  namespace: between
+  labels:
+    app.kubernetes.io/name: between
+    app.kubernetes.io/part-of: between-gitops
+  annotations:
+    ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: "web"
+spec:
+  rules:
+    - http:
+        paths:
+          # Backend API
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          # Backend Django Static Files
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          # Media / Resume Uploads
+          - path: /uploads
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          # Candidate Photos
+          - path: /photos
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          # Frontend SPA (catch-all)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: between-frontend
+                port:
+                  number: 80
