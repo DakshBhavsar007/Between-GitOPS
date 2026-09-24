@@ -16,10 +16,14 @@ logger = logging.getLogger(__name__)
 # Initialize Groq client if key exists, otherwise we will fallback to RotateLLMClient
 groq_key = os.environ.get("GROQ_API_KEY")
 if groq_key:
-    GROQ_CLIENT = OpenAI(
-        api_key=groq_key,
-        base_url="https://api.groq.com/openai/v1"
-    )
+    try:
+        GROQ_CLIENT = OpenAI(
+            api_key=groq_key,
+            base_url="https://api.groq.com/openai/v1"
+        )
+    except Exception as e:
+        logger.warning(f"Failed to initialize GROQ_CLIENT: {e}")
+        GROQ_CLIENT = None
 else:
     GROQ_CLIENT = None
 

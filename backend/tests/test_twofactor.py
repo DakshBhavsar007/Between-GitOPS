@@ -1,6 +1,17 @@
 import os
+import sys
 import json
 from unittest.mock import patch, MagicMock
+
+# Ensure Django is initialized when running standalone via unittest runner
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vishleshan_backend.settings")
+
+import django
+from django.apps import apps
+if not apps.ready:
+    django.setup()
+
 from django.test import TestCase
 from django.urls import reverse
 from django.core.cache import cache
@@ -10,14 +21,18 @@ class TwoFactorTest(TestCase):
     def setUp(self):
         cache.clear()
         self.original_key = os.environ.get("TWOFACTOR_API_KEY")
-        os.environ["TWOFACTOR_API_KEY"] = "4f991880-8339-11f1-9728-0200cd936042"
+        self.dummy_key = "4f991880-8339-11f1-9728-0200cd936042"
+        os.environ["TWOFACTOR_API_KEY"] = self.dummy_key
+        twofactor_service.TWOFACTOR_API_KEY = self.dummy_key
 
     def tearDown(self):
         cache.clear()
         if self.original_key is not None:
             os.environ["TWOFACTOR_API_KEY"] = self.original_key
+            twofactor_service.TWOFACTOR_API_KEY = self.original_key
         else:
             os.environ.pop("TWOFACTOR_API_KEY", None)
+            twofactor_service.TWOFACTOR_API_KEY = None
 
     @patch("httpx.get")
     def test_send_otp_success(self, mock_get):

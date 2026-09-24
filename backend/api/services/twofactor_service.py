@@ -48,7 +48,8 @@ def send_otp(phone_number: str, method: str = "sms") -> dict:
         {"success": bool, "session_id": str, "error": str or None}
     """
     masked = mask_phone(phone_number)
-    if not TWOFACTOR_API_KEY:
+    api_key = os.getenv("TWOFACTOR_API_KEY") or TWOFACTOR_API_KEY
+    if not api_key:
         logger.warning("TWOFACTOR_API_KEY is not set in environment variables.")
         return {
             "success": False,
@@ -59,9 +60,9 @@ def send_otp(phone_number: str, method: str = "sms") -> dict:
     phone = clean_phone_for_2factor(phone_number)
     
     if method == "voice":
-        url = f"https://2factor.in/API/V1/{TWOFACTOR_API_KEY}/VOICE/{phone}/AUTOGEN"
+        url = f"https://2factor.in/API/V1/{api_key}/VOICE/{phone}/AUTOGEN"
     else:
-        url = f"https://2factor.in/API/V1/{TWOFACTOR_API_KEY}/SMS/{phone}/AUTOGEN"
+        url = f"https://2factor.in/API/V1/{api_key}/SMS/{phone}/AUTOGEN"
     
     logger.info("Attempting to send 2Factor OTP via %s to %s...", method.upper(), masked)
     try:
@@ -115,7 +116,8 @@ def verify_otp(session_id: str, otp_code: str) -> dict:
     dict
         {"success": bool, "error": str or None}
     """
-    if not TWOFACTOR_API_KEY:
+    api_key = os.getenv("TWOFACTOR_API_KEY") or TWOFACTOR_API_KEY
+    if not api_key:
         return {
             "success": False,
             "error": "2Factor API Key not configured."
@@ -127,7 +129,7 @@ def verify_otp(session_id: str, otp_code: str) -> dict:
             "error": "Missing session ID. Please request a new verification code."
         }
 
-    url = f"https://2factor.in/API/V1/{TWOFACTOR_API_KEY}/SMS/VERIFY/{session_id}/{otp_code.strip()}"
+    url = f"https://2factor.in/API/V1/{api_key}/SMS/VERIFY/{session_id}/{otp_code.strip()}"
     
     logger.info("Verifying 2Factor OTP for session %s...", session_id)
     try:
