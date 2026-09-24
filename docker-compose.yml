@@ -1,0 +1,154 @@
+
+services:
+  # ==========================================
+  # Database: PostgreSQL 15
+  # ==========================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: between-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vishleshan
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d vishleshan"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - between-network
+
+  # ==========================================
+  # In-memory Cache & Broker: Redis 7
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: between-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - between-network
+
+  # ==========================================
+  # Backend API: Django + Gunicorn
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: between-gitops-backend:latest
+    container_name: between-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/vishleshan
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/1
+      # LOCAL DEVELOPMENT ONLY: Must be replaced with a secure random key in production
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-jwt-key-replace-in-production-between-gitops}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_ORIGINS: "http://localhost,http://localhost:3000,http://localhost:80,http://127.0.0.1,http://frontend"
+      # LOCAL DEVELOPMENT ONLY: Obviously fake placeholder (non-functional)
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-local-dummy-key-not-a-real-secret}
+      PORT: "8000"
+    volumes:
+      - uploads_data:/app/uploads
+      - photos_data:/app/photos
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - between-network
+
+  # ==========================================
+  # Background Worker: Celery (Reuses Backend Image)
+  # ==========================================
+  celery:
+    image: between-gitops-backend:latest
+    container_name: between-celery
+    restart: unless-stopped
+    command: ["celery", "-A", "workers.celery_worker", "worker", "--loglevel=info", "-c", "2"]
+    environment:
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/vishleshan
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/1
+      # LOCAL DEVELOPMENT ONLY: Must be replaced with a secure random key in production
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-jwt-key-replace-in-production-between-gitops}
+      DEBUG: ${DEBUG:-True}
+      # LOCAL DEVELOPMENT ONLY: Obviously fake placeholder (non-functional)
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-local-dummy-key-not-a-real-secret}
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A workers.celery_worker inspect ping || exit 1"]
+      interval: 20s
+      timeout: 15s
+      retries: 3
+      start_period: 20s
+    volumes:
+      - uploads_data:/app/uploads
+      - photos_data:/app/photos
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - between-network
+
+  # ==========================================
+  # Frontend: React Vite + NGINX SPA Proxy
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: between-gitops-frontend:latest
+    container_name: between-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      - backend
+    networks:
+      - between-network
+
+networks:
+  between-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:
+  photos_data:
