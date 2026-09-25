@@ -12,3 +12,11 @@ images:
     newTag: 26bd0618bdd409338e4ba5bc56a6e29ec14a3b86
   - name: ghcr.io/dakshbhavsar007/between-frontend
     newTag: 26bd0618bdd409338e4ba5bc56a6e29ec14a3b86
+
+# Single replica for staging on resource-constrained single-node k3s
+replicas:
+  - name: between-backend
+    count: 1
+  - name: between-frontend
+    count: 1
+

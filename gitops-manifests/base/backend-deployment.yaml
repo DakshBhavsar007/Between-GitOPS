@@ -33,6 +33,21 @@ spec:
         - name: backend
           image: ghcr.io/dakshbhavsar007/between-backend:placeholder
           imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - /app/entrypoint.sh
+            - gunicorn
+            - vishleshan_backend.wsgi:application
+            - --bind
+            - 0.0.0.0:8000
+            - --workers
+            - "1"
+            - --timeout
+            - "120"
+            - --access-logfile
+            - "-"
+            - --error-logfile
+            - "-"
           ports:
             - containerPort: 8000
               name: http

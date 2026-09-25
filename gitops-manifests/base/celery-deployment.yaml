@@ -36,8 +36,7 @@ spec:
             - workers.celery_worker
             - worker
             - --loglevel=info
-            - -c
-            - "2"
+            - --pool=solo
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

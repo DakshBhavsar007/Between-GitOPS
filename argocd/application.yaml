@@ -11,10 +11,10 @@ metadata:
 spec:
   project: default
   source:
-    # Dedicated GitOps manifests repository
-    repoURL: https://github.com/DakshBhavsar007/between-k8s-manifests.git
+    # GitOps manifests repository
+    repoURL: https://github.com/DakshBhavsar007/Between-GitOPS.git
     targetRevision: main
-    path: overlays/staging
+    path: gitops-manifests/overlays/staging
   destination:
     server: https://kubernetes.default.svc
     namespace: between

@@ -49,12 +49,9 @@ RUN groupadd -g 1000 appgroup && \
     mkdir -p /app/staticfiles /app/uploads /app/photos /app/data && \
     chown -R appuser:appgroup /app
 
-# Copy and set up entrypoint script first for optimal layer caching
-COPY --chown=appuser:appgroup entrypoint.sh /app/entrypoint.sh
-RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
-
 # Copy application code
 COPY --chown=appuser:appgroup . .
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 USER appuser
 
