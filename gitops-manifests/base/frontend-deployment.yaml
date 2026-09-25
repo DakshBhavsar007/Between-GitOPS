@@ -57,10 +57,4 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  - for f in /usr/share/nginx/html/assets/*.js; do sed -i 's/client_id=undefined/client_id=Ov23liZTawFuQJbU3Q1J/g' "$f" 2>/dev/null || true; done
+
