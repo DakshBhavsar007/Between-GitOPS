@@ -116,3 +116,24 @@ kubectl create secret generic between-secrets -n between \
 kubectl apply -f argocd/application.yaml
 ```
 All application pods will deploy, apply migrations, collect static assets, and become fully operational within 3 minutes.
+
+---
+
+## 5. Routine Cost Management & Cold Start Automation
+
+To shut down compute during prolonged periods of inactivity or bring the system back online without manual intervention:
+
+- **Launch Command**: Double-click `Between-AWS-Toggle.bat`.
+- **Automatic Sequence**:
+  - **Shutdown (RUNNING → STOP)**: Prompts for `(Y/N)` confirmation, gracefully stops the EC2 instance first, then stops the RDS instance.
+  - **Cold Start (STOPPED → START)**:
+    1. Starts RDS PostgreSQL first, actively polling until `DBInstanceStatus == available`.
+    2. Starts EC2 instance and waits until `running`.
+    3. Detects whether an Elastic IP is present. If dynamic IPv4 is allocated, compares with Route 53 A-record for `between.dakshaws.sryze.cc` and performs an automatic Route 53 UPSERT (TTL: 300).
+    4. Waits for k3s, Traefik, Nginx, and Django to boot, verifying HTTP 200 on `https://between.dakshaws.sryze.cc/healthz`, `/`, and `/api/v1/health`.
+- **Storage & AWS Caveats**:
+  - Stopping compute pauses EC2 and RDS hourly charges.
+  - Persistent EBS (30GB gp3) and RDS allocated storage (20GB gp3) continue to accrue storage fees (~$5.00/month).
+  - Route 53 hosted zone charges remain active (~$0.50/month).
+  - **RDS 7-Day Limit**: AWS automatically restarts stopped RDS databases after 7 consecutive days if not started manually.
+

@@ -159,3 +159,20 @@ curl -s https://between.dakshaws.sryze.cc/api/v1/dynamic-data
 # Traefik Ingress Controller Health Check
 curl -I http://between.dakshaws.sryze.cc/healthz
 ```
+
+---
+
+## 6. AWS Cost Management (One-Click Toggle)
+
+To eliminate runtime compute charges when the environment is idle:
+
+- **Launch Command**: Double-click `Between-AWS-Toggle.bat` (or execute `powershell -File between-aws-toggle.ps1`).
+- **State Detection**:
+  - Automatically queries current status of EC2 `i-0b49f1e35eeca2dc2` and RDS `between-prod-db`.
+  - **If RUNNING**: Prompts for confirmation `(Y/N)`. Stops EC2, then stops RDS, minimizing compute billing.
+  - **If STOPPED**: Starts RDS first, waits until `available`, starts EC2, waits until `running`, queries new dynamic public IP, automatically updates Route 53 A-record for `between.dakshaws.sryze.cc` if changed, waits for k3s workloads, and validates HTTPS health endpoints.
+- **Cost Notes**:
+  - Persistent EBS storage (30GB gp3) and RDS allocated storage (20GB gp3) continue to incur charges (~$5.00/mo combined).
+  - Route 53 hosted-zone fee remains ~$0.50/mo.
+  - Stopped RDS instances are automatically restarted by AWS after 7 days if not started manually.
+

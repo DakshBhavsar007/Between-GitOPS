@@ -260,6 +260,18 @@ Detailed documentation:
 - 🔄 [Disaster Recovery & Backup Protocols](DISASTER-RECOVERY.md)
 - 💰 [One-Click AWS Cost Management Toggle](between-aws-toggle.ps1)
 
+#### AWS Cost Management (One-Click Toggle)
+
+To minimize ongoing cloud costs when the platform is not actively serving requests:
+- **Double-click `Between-AWS-Toggle.bat`**:
+  - **When RUNNING**: Safely stops the EC2 instance (`i-0b49f1e35eeca2dc2`) and RDS PostgreSQL database (`between-prod-db`), prompting with a `(Y/N)` safety confirmation.
+  - **When STOPPED**: Starts RDS first, waits until `available`, starts EC2, waits until `running`, automatically discovers the new dynamic public IP, updates the Route 53 A-record for `between.dakshaws.sryze.cc` if changed, waits for k3s workloads, and verifies HTTPS endpoints.
+- **Cost & Storage Caveats**:
+  - Hourly compute billing for EC2 (`t3.small`) and RDS (`db.t4g.micro`) is paused while stopped.
+  - Fixed storage charges continue for persistent EBS root volumes (30GB gp3) and RDS allocated storage (20GB gp3) at ~$5.00/month combined.
+  - Route 53 hosted-zone charges remain active at ~$0.50/month.
+  - **RDS 7-Day Limit**: AWS automatically restarts stopped RDS databases after 7 consecutive days if not started manually.
+
 ---
 
 ### Manual Local Setup & Requirements

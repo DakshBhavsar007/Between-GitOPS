@@ -143,3 +143,21 @@ Traefik acts as the edge reverse proxy and TLS termination point:
 | `/photos/*` | `between-backend` | 8000 | Candidate avatars & company logos |
 | `/healthz` | `between-frontend` / `between-backend` | 80 / 8000 | Health probe endpoint returning HTTP 200 |
 | `/*` (catch-all) | `between-frontend` | 80 | React Single Page Application (SPA) |
+
+---
+
+## 5. AWS Cost Management (One-Click Toggle Lifecycle)
+
+To eliminate ongoing compute costs while preserving state and data:
+
+- **Script**: `Between-AWS-Toggle.bat` (`between-aws-toggle.ps1`)
+- **Automatic State Detection**:
+  - Automatically queries AWS API for EC2 (`i-0b49f1e35eeca2dc2`) and RDS (`between-prod-db`) status.
+  - **RUNNING → STOP**: Safely stops EC2 (k3s, Traefik, ArgoCD, application workloads), then stops RDS PostgreSQL. Prompts with a safety confirmation `(Y/N)`.
+  - **STOPPED → START**: Starts RDS first, waits until `available`, starts EC2, waits until `running`, retrieves dynamic public IPv4, automatically updates Route 53 A-record for `between.dakshaws.sryze.cc` (hosted zone `dakshaws.sryze.cc`), waits for k3s boot, and verifies production HTTPS endpoints.
+- **Cost & Storage Caveats**:
+  - Pausing compute reduces runtime EC2 and RDS hourly charges.
+  - Fixed storage charges continue for persistent EBS root volumes (30GB gp3) and RDS allocated storage (20GB gp3) at ~$5.00/month combined.
+  - Route 53 hosted zone charges remain active (~$0.50/month).
+  - **RDS 7-Day Limit**: AWS automatically restarts stopped RDS databases after 7 consecutive days if not started manually.
+
