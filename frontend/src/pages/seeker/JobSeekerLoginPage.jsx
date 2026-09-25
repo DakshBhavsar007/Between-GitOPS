@@ -21,7 +21,7 @@ export default function JobSeekerLoginPage() {
     script.onload = () => {
       if (window.google) {
         googleClientRef.current = window.google.accounts.oauth2.initTokenClient({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || (typeof window !== 'undefined' && window.__ENV__?.VITE_GOOGLE_CLIENT_ID) || '577665042867-n5c9uocqchg40e11812j4s0t766h76j8.apps.googleusercontent.com',
           scope: "openid email profile",
           callback: async (tokenResponse) => {
             if (tokenResponse && tokenResponse.access_token) {
@@ -155,7 +155,7 @@ export default function JobSeekerLoginPage() {
             type="button" 
             disabled={loading}
             onClick={() => {
-              const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+              const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID || (typeof window !== 'undefined' && window.__ENV__?.VITE_GITHUB_CLIENT_ID) || 'Ov23liZTawFuQJbU3Q1J';
               const redirectUri = encodeURIComponent(window.location.origin + '/auth/github/callback');
               window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user,user:email&state=seeker`;
             }}

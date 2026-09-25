@@ -10,9 +10,14 @@ RUN npm install
 
 COPY . .
 
-# Build arg for API URL during build time
+# Build args for public client IDs and API URL during build time
 ARG VITE_API_URL=/api/v1
+ARG VITE_GITHUB_CLIENT_ID=Ov23liZTawFuQJbU3Q1J
+ARG VITE_GOOGLE_CLIENT_ID=577665042867-n5c9uocqchg40e11812j4s0t766h76j8.apps.googleusercontent.com
+
 ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_GITHUB_CLIENT_ID=${VITE_GITHUB_CLIENT_ID}
+ENV VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
 
 RUN npm run build
 

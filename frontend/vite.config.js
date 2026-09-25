@@ -45,7 +45,9 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env.NEXT_PUBLIC_API_URL': (env.NEXT_PUBLIC_API_URL || env.VITE_API_URL)
         ? JSON.stringify(env.NEXT_PUBLIC_API_URL || env.VITE_API_URL)
-        : '(typeof window !== "undefined" && window.location && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" ? "https://api.between.indevs.in/api/v1" : "http://127.0.0.1:8000/api/v1")'
+        : '(typeof window !== "undefined" && window.location && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" ? "https://api.between.indevs.in/api/v1" : "http://127.0.0.1:8000/api/v1")',
+      'import.meta.env.VITE_GITHUB_CLIENT_ID': JSON.stringify(env.VITE_GITHUB_CLIENT_ID || 'Ov23liZTawFuQJbU3Q1J'),
+      'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(env.VITE_GOOGLE_CLIENT_ID || '577665042867-n5c9uocqchg40e11812j4s0t766h76j8.apps.googleusercontent.com')
     }
   }
 })

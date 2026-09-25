@@ -79,6 +79,8 @@ jobs:
         run: |
           cd frontend
           echo "VITE_API_URL=/api/v1" > .env.local
+          echo "VITE_GITHUB_CLIENT_ID=Ov23liZTawFuQJbU3Q1J" >> .env.local
+          echo "VITE_GOOGLE_CLIENT_ID=577665042867-n5c9uocqchg40e11812j4s0t766h76j8.apps.googleusercontent.com" >> .env.local
 
       - name: Build Frontend Assets
         run: |
@@ -186,6 +188,10 @@ jobs:
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
+          build-args: |
+            VITE_API_URL=/api/v1
+            VITE_GITHUB_CLIENT_ID=Ov23liZTawFuQJbU3Q1J
+            VITE_GOOGLE_CLIENT_ID=577665042867-n5c9uocqchg40e11812j4s0t766h76j8.apps.googleusercontent.com
           push: ${{ steps.push_decision.outputs.SHOULD_PUSH == 'true' }}
           tags: |
             ghcr.io/${{ steps.repo_owner.outputs.OWNER }}/between-frontend:${{ github.sha }}
