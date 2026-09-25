@@ -177,6 +177,7 @@ Vishleshan includes the following built-in security controls:
 | **Administrative Access Restriction** | EC2 SSH port 22 and Kubernetes API port 6443 ingress are restricted to authorized operator subnets (`152.58.0.0/16`). |
 | **Container Privilege Minimization** | Backend and Celery workloads execute with `runAsNonRoot: true`, unprivileged UID 1000, `allowPrivilegeEscalation: false`, and all Linux capabilities dropped (`drop: [ALL]`). |
 | **Database Encryption & Isolation** | AWS RDS PostgreSQL runs in private subnets across multiple AZs with TLS/SSL database connections enforced. |
+| **TLS/HTTPS Edge Termination** | Automated Let's Encrypt TLS certificates issued via Traefik ACME HTTP-01 challenge for `between.dakshaws.sryze.cc`; permanent 301 HTTP-to-HTTPS redirect enforced. |
 
 ---
 

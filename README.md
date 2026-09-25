@@ -27,6 +27,7 @@
     <img src="https://img.shields.io/badge/Kubernetes-k3s-326CE5?style=flat-square&logo=kubernetes&logoColor=white" alt="Kubernetes" />
     <img src="https://img.shields.io/badge/GitOps-ArgoCD-EF7B4D?style=flat-square&logo=argo&logoColor=white" alt="ArgoCD" />
     <img src="https://img.shields.io/badge/AWS-EC2_%2B_RDS-FF9900?style=flat-square&logo=amazon-aws&logoColor=white" alt="AWS" />
+    <img src="https://img.shields.io/badge/SSL-Let's_Encrypt-003A70?style=flat-square&logo=letsencrypt&logoColor=white" alt="Let's Encrypt" />
     <img src="https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis" />
     <img src="https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
     <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
@@ -244,7 +245,8 @@ run.bat
 
 ### Production GitOps Deployment (AWS EC2 + k3s + ArgoCD + RDS)
 
-The production infrastructure is fully automated via GitOps:
+- **Live Production URL**: [https://between.dakshaws.sryze.cc](https://between.dakshaws.sryze.cc)
+- **HTTPS & Certificates**: Automated Let's Encrypt TLS with Traefik HTTP-01 challenge and permanent HTTP-to-HTTPS redirect.
 - **Compute**: AWS EC2 `t3.small` (Ubuntu 24.04 LTS) running a lightweight `k3s` Kubernetes cluster.
 - **Continuous Delivery**: `ArgoCD` continuously reconciles manifests from `gitops-manifests/overlays/staging`.
 - **Database**: AWS RDS PostgreSQL 15.13 (`db.t4g.micro`, `between-prod-db`) with private subnet group and security group isolation.

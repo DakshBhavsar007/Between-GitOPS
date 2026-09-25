@@ -125,9 +125,15 @@ This document specifies the production GitOps infrastructure designed for the **
 
 ---
 
-## 4. Ingress Routing Rules
+## 4. Ingress & TLS Termination (`between.dakshaws.sryze.cc`)
 
-Traefik evaluates incoming requests against the following routing hierarchy:
+Traefik acts as the edge reverse proxy and TLS termination point:
+- **Canonical Host**: `between.dakshaws.sryze.cc`
+- **ACME Resolver**: Native Traefik ACME HTTP-01 challenge via Let's Encrypt (`letsencrypt` certResolver).
+- **Certificate Storage**: Persistent storage at `/data/acme.json` backed by `traefik` PVC on `local-path` storageClass.
+- **Port Redirection**: Automatic permanent `301 Moved Permanently` redirect from HTTP (port 80) to HTTPS (port 443).
+
+### Routing Table:
 
 | Inbound Path | Target Service | Container Port | Protocol / Behavior |
 | :--- | :--- | :--- | :--- |

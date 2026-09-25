@@ -8,10 +8,13 @@ metadata:
     app.kubernetes.io/part-of: between-gitops
   annotations:
     ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/router.entrypoints: "web"
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
 spec:
   rules:
-    - http:
+    - host: between.dakshaws.sryze.cc
+      http:
         paths:
           # Backend API
           - path: /api
@@ -53,3 +56,43 @@ spec:
                 name: between-frontend
                 port:
                   number: 80
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          - path: /uploads
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          - path: /photos
+            pathType: Prefix
+            backend:
+              service:
+                name: between-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: between-frontend
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - between.dakshaws.sryze.cc

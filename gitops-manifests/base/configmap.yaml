@@ -9,7 +9,7 @@ metadata:
 data:
   DEBUG: "False"
   PORT: "8000"
-  ALLOWED_ORIGINS: "http://localhost:3000,http://13.201.134.20,https://between.indevs.in"
+  ALLOWED_ORIGINS: "http://localhost:3000,http://13.201.134.20,https://between.dakshaws.sryze.cc,http://between.dakshaws.sryze.cc,https://between.indevs.in"
   UPLOAD_DIR: "/app/uploads"
   PHOTO_DIR: "/app/photos"
   POSTGRES_PORT: "5432"

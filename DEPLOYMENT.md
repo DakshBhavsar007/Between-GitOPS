@@ -145,14 +145,17 @@ kubectl logs deployment/between-celery -n between --tail=100
 kubectl logs deployment/between-frontend -n between --tail=50
 ```
 
-### Health Check Endpoints
+### Production Endpoints (Verified Live)
 ```bash
-# Ingress healthcheck
-curl -I http://<EC2-IP-OR-DOMAIN>/healthz
+# Ingress & Frontend SPA (with HTTP -> HTTPS 301 Redirect)
+curl -IL https://between.dakshaws.sryze.cc/
 
-# Direct backend API healthcheck
-curl -I http://<EC2-IP-OR-DOMAIN>/api/v1/health
+# Backend API Health Check
+curl -I https://between.dakshaws.sryze.cc/api/v1/health
 
-# Frontend single page application
-curl -I http://<EC2-IP-OR-DOMAIN>/
+# Dynamic Data / DB-backed API Endpoint
+curl -s https://between.dakshaws.sryze.cc/api/v1/dynamic-data
+
+# Traefik Ingress Controller Health Check
+curl -I http://between.dakshaws.sryze.cc/healthz
 ```
