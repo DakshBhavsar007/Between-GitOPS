@@ -88,6 +88,12 @@ sample_candidates.csv
 sample_candidates.json
 sample_candidates.xlsx
 
+# Credentials & Keys
+*.pem
+*.key
+*kubeconfig*
+*.crt
+
 # OS-specific
 *.swp
 *.swo

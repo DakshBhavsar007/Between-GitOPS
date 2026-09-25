@@ -166,6 +166,20 @@ Vishleshan includes the following built-in security controls:
 
 ---
 
+## Infrastructure & GitOps Security Controls
+
+| Domain | Control Description |
+| :--- | :--- |
+| **Git Repository Secret Hygiene** | Zero production secrets, private keys, `.env` files, or kubeconfig files exist in Git. Secret templates in Git contain only dummy placeholder strings. |
+| **Cluster Secret Isolation** | Production secrets are injected cluster-side directly as Kubernetes Opaque Secrets (`between-secrets`). ArgoCD is configured with `ignoreDifferences` to prevent overwriting. |
+| **CI Runner Credential Isolation** | GitHub Actions workflows contain no AWS credentials, SSH private keys, or kubeconfig tokens. CI solely builds images and publishes to GHCR. |
+| **AWS Security Group Ingress** | RDS PostgreSQL port 5432 ingress is restricted exclusively to the k3s EC2 Security Group. No external `0.0.0.0/0` access is permitted. |
+| **Administrative Access Restriction** | EC2 SSH port 22 and Kubernetes API port 6443 ingress are restricted to authorized operator subnets (`152.58.0.0/16`). |
+| **Container Privilege Minimization** | Backend and Celery workloads execute with `runAsNonRoot: true`, unprivileged UID 1000, `allowPrivilegeEscalation: false`, and all Linux capabilities dropped (`drop: [ALL]`). |
+| **Database Encryption & Isolation** | AWS RDS PostgreSQL runs in private subnets across multiple AZs with TLS/SSL database connections enforced. |
+
+---
+
 ## Acknowledgements
 
 We are grateful to security researchers who help make Vishleshan safer. Responsible disclosures will be credited in release notes (with your permission).

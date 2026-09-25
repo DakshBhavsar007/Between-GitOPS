@@ -18,6 +18,13 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: between
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: between-secrets
+      jsonPointers:
+        - /data
+        - /stringData
   syncPolicy:
     automated:
       prune: true      # Automatically delete resources removed from Git

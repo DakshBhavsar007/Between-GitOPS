@@ -24,9 +24,11 @@
     <img src="https://img.shields.io/badge/Django-5.0-092E20?style=flat-square&logo=django&logoColor=white" alt="Django" />
     <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
     <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+    <img src="https://img.shields.io/badge/Kubernetes-k3s-326CE5?style=flat-square&logo=kubernetes&logoColor=white" alt="Kubernetes" />
+    <img src="https://img.shields.io/badge/GitOps-ArgoCD-EF7B4D?style=flat-square&logo=argo&logoColor=white" alt="ArgoCD" />
+    <img src="https://img.shields.io/badge/AWS-EC2_%2B_RDS-FF9900?style=flat-square&logo=amazon-aws&logoColor=white" alt="AWS" />
     <img src="https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis" />
     <img src="https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-    <img src="https://img.shields.io/badge/Gemini_AI-Multi_Key-8E75B2?style=flat-square&logo=google&logoColor=white" alt="Gemini" />
     <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
   </p>
 </div>
@@ -240,7 +242,25 @@ run.bat
 
 ---
 
-### Manual Setup & Requirements
+### Production GitOps Deployment (AWS EC2 + k3s + ArgoCD + RDS)
+
+The production infrastructure is fully automated via GitOps:
+- **Compute**: AWS EC2 `t3.small` (Ubuntu 24.04 LTS) running a lightweight `k3s` Kubernetes cluster.
+- **Continuous Delivery**: `ArgoCD` continuously reconciles manifests from `gitops-manifests/overlays/staging`.
+- **Database**: AWS RDS PostgreSQL 15.13 (`db.t4g.micro`, `between-prod-db`) with private subnet group and security group isolation.
+- **Ingress**: `Traefik` routes public HTTP (port 80) and HTTPS (port 443) traffic to internal ClusterIP services.
+- **CI Pipeline**: GitHub Actions validates frontend & backend tests, builds multi-stage Docker images, and publishes immutable commit-tagged containers to GitHub Container Registry (GHCR).
+
+Detailed documentation:
+- 📖 [System Architecture & Network Topology](ARCHITECTURE.md)
+- 🚀 [Deployment & GitOps Release Guide](DEPLOYMENT.md)
+- 🛡️ [Security Policy & Infrastructure Controls](SECURITY.md)
+- 🔄 [Disaster Recovery & Backup Protocols](DISASTER-RECOVERY.md)
+- 💰 [One-Click AWS Cost Management Toggle](between-aws-toggle.ps1)
+
+---
+
+### Manual Local Setup & Requirements
 
 #### 1. Requirements
 - Node.js `v18+`

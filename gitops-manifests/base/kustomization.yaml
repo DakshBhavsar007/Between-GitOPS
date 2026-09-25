@@ -6,7 +6,6 @@ namespace: between
 resources:
   - namespace.yaml
   - configmap.yaml
-  - secrets-template.yaml
   - pvc.yaml
   - redis-deployment.yaml
   - redis-service.yaml
